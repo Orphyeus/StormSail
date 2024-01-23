@@ -21,7 +21,7 @@ class Lookout(Character):
         super().__init__(name, "Lookout")
 
     def action(self, target):
-        # Placeholder for Lookout's action
-        pass
-
+        if target.has_night_action():
+            print(f"{self.name} observed {target.name} performing a night action.")
+           
 # Additional character classes would be defined similarly...
