@@ -1,0 +1,6 @@
+# Example of initializing and starting a game
+game = Game()
+game.add_player(Captain("Captain John"))
+game.add_player(Lookout("Eagle Eye"))
+# Add other players as needed
+game.start_game()
