@@ -2,25 +2,20 @@ class Character:
     def __init__(self, name, role):
         self.name = name
         self.role = role
+        self.alive = True
+        self.imprisoned = False
 
     def action(self, target):
-        pass  # Specific action for each character will be defined here
-
-# Example classes for other characters
-class Captain(Character):
-    def __init__(self, name):
-        super().__init__(name, "Captain")
-
-    def action(self, target):
-        # Specific action for Captain
         pass
+
+class Captain(Character):
+    def action(self, target):
+        target.imprisoned = True
+        print(f"{self.name} has imprisoned {target.name}.")
 
 class Lookout(Character):
-    def __init__(self, name):
-        super().__init__(name, "Lookout")
-
     def action(self, target):
-        # Specific action for Lookout
-        pass
+        if target.has_night_action():
+            print(f"{self.name} observed {target.name} performing a night action.")
 
-# Other character classes will be defined similarly
+# Implement similar actions for other characters...
