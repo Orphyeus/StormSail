@@ -3,28 +3,57 @@ class Game:
         self.players = []
         self.is_night = False
         self.day_count = 0
+        self.storm_chance = 0.15  # For example, 15% chance of a storm each day
 
     def add_player(self, character):
         self.players.append(character)
+
+    def check_for_storm(self):
+        """ Randomly checks for a storm and applies the effects. """
+        if random.random() < self.storm_chance:
+            return True
+        return False
+
+    def storm_at_night(self):
+        """ Night storm: Randomly selects a player to be thrown overboard. """
+        if self.check_for_storm():
+            victim = random.choice([p for p in self.players if p.alive])
+            victim.alive = False
+            print(f"A storm hit the ship! {victim.name} has fallen overboard and drowned.")
+            return True
+        return False
+
+    def storm_at_day(self):
+        """ Day storm: Cancels the voting for the day. """
+        if self.check_for_storm():
+            print("A storm has hit during the day! The crew is too busy dealing with it to hold a vote.")
+            return True
+        return False
 
     def start_night(self):
         self.is_night = True
         self.day_count += 1
         print(f"Night {self.day_count} begins.")
+        self.check_for_storm()
+        # Perform night actions if no storm
+        if not self.storm_at_night():
+            for player in self.players:
+                if player.alive and not player.imprisoned:
+                    player.action(self.choose_target(player))
+
+    def start_day(self):
+        self.is_night = False
         for player in self.players:
-            if player.alive and not player.imprisoned:
-                player.action(self.choose_target(player))
+            player.imprisoned = False
+        print(f"Day {self.day_count} begins.")
+        self.check_for_storm()
+        # Conduct voting if no storm
+        if not self.storm_at_day():
+            self.vote()
 
     def choose_target(self, player):
         import random
         return random.choice([p for p in self.players if p != player and p.alive])
-
-    def start_day(self):
-        self.is_night = False
-        print(f"Day {self.day_count} begins.")
-        for player in self.players:
-            player.imprisoned = False
-        self.vote()
 
 
     def get_vote(self, player):
