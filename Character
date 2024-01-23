@@ -9,13 +9,19 @@ class Character:
         pass
 
 class Captain(Character):
+    def __init__(self, name):
+        super().__init__(name, "Captain")
+
     def action(self, target):
         target.imprisoned = True
         print(f"{self.name} has imprisoned {target.name}.")
 
 class Lookout(Character):
-    def action(self, target):
-        if target.has_night_action():
-            print(f"{self.name} observed {target.name} performing a night action.")
+    def __init__(self, name):
+        super().__init__(name, "Lookout")
 
-# Implement similar actions for other characters...
+    def action(self, target):
+        # Placeholder for Lookout's action
+        pass
+
+# Additional character classes would be defined similarly...
