@@ -26,12 +26,39 @@ class Game:
             player.imprisoned = False
         self.vote()
 
-    def vote(self):
-        print("Voting time!")
+
+    def get_vote(self, player):
+        """ Get a vote from the given player. Currently, it selects a target randomly. """
         import random
-        eliminated = random.choice([p for p in self.players if p.alive])
-        eliminated.alive = False
-        print(f"{eliminated.name} has been voted out.")
+        # Choose from other alive players except the one who is voting
+        possible_targets = [p.name for p in self.players if p.alive and p.name != player.name]
+        return random.choice(possible_targets)
+
+    def vote(self):
+        """ Conduct the voting process among the players. """
+        print("Voting time!")
+        # Initialize vote counts for each player
+        votes = {player.name: 0 for player in self.players if player.alive}
+
+        # Each alive player casts a vote
+        for player in self.players:
+            if player.alive:
+                voted_player = self.get_vote(player)
+                votes[voted_player] += 1
+                print(f"{player.name} voted for {voted_player}")
+
+        # Determine who got the most votes
+        eliminated_player = max(votes, key=votes.get)
+        self.eliminate_player(eliminated_player)
+
+    def eliminate_player(self, player_name):
+        """ Eliminate the player with the given name from the game. """
+        for player in self.players:
+            if player.name == player_name:
+                player.alive = False
+                print(f"{player.name} has been eliminated from the game.")
+                break
+
 
     def check_win_conditions(self):
         good_alive = [player for player in self.players if player.role != "Evil" and player.alive]
