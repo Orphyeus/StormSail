@@ -1,0 +1,26 @@
+class Character:
+    def __init__(self, name, role):
+        self.name = name
+        self.role = role
+
+    def action(self, target):
+        pass  # Specific action for each character will be defined here
+
+# Example classes for other characters
+class Captain(Character):
+    def __init__(self, name):
+        super().__init__(name, "Captain")
+
+    def action(self, target):
+        # Specific action for Captain
+        pass
+
+class Lookout(Character):
+    def __init__(self, name):
+        super().__init__(name, "Lookout")
+
+    def action(self, target):
+        # Specific action for Lookout
+        pass
+
+# Other character classes will be defined similarly
