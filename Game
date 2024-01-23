@@ -1,0 +1,53 @@
+class Game:
+    def __init__(self):
+        self.players = []
+        self.is_night = False
+        self.day_count = 0
+
+    def add_player(self, character):
+        self.players.append(character)
+
+    def start_night(self):
+        self.is_night = True
+        self.day_count += 1
+        print(f"Night {self.day_count} begins.")
+        for player in self.players:
+            if player.alive and not player.imprisoned:
+                player.action(self.choose_target(player))
+
+    def choose_target(self, player):
+        import random
+        return random.choice([p for p in self.players if p != player and p.alive])
+
+    def start_day(self):
+        self.is_night = False
+        print(f"Day {self.day_count} begins.")
+        for player in self.players:
+            player.imprisoned = False
+        self.vote()
+
+    def vote(self):
+        print("Voting time!")
+        import random
+        eliminated = random.choice([p for p in self.players if p.alive])
+        eliminated.alive = False
+        print(f"{eliminated.name} has been voted out.")
+
+    def check_win_conditions(self):
+        good_alive = [player for player in self.players if player.role != "Evil" and player.alive]
+        evil_alive = [player for player in self.players if player.role == "Evil" and player.alive]
+
+        if not evil_alive:
+            print("Good characters win!")
+            return True
+        elif len(evil_alive) >= len(good_alive):
+            print("Evil characters win!")
+            return True
+        return False
+
+    def start_game(self):
+        while not self.check_win_conditions():
+            self.start_day()
+            self.start_night()
+        print("Game Over")
+
