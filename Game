@@ -1,109 +1,101 @@
 class Game:
     def __init__(self):
         self.players = []
-        self.is_night = False
         self.day_count = 0
-        self.storm_chance = 0.15  # For example, 15% chance of a storm each day
+        self.is_night = False
+        self.storm_chance = 0.15
+        self.journey_days = 4  # Initial journey days
 
-    def add_player(self, character):
-        self.players.append(character)
+    def add_player(self, player):
+        self.players.append(player)
 
-    def check_for_storm(self):
-        """ Randomly checks for a storm and applies the effects. """
+    def start_day(self):
+        self.is_night = False
+        self.day_count += 1
+        print(f"Day {self.day_count} begins.")
+        if not self.check_storm():
+            self.vote()
+
+    def start_night(self):
+        self.is_night = True
+        print(f"Night {self.day_count} begins.")
+        if not self.check_storm():
+            for player in self.players:
+                if player.character.is_alive:
+                    player.character.perform_action(self.players)
+
+    def check_storm(self):
         if random.random() < self.storm_chance:
+            print("A storm has hit the ship!")
+            if self.is_night:
+                self.storm_at_night()
+            else:
+                self.storm_at_day()
             return True
         return False
 
     def storm_at_night(self):
-        """ Night storm: Randomly selects a player to be thrown overboard. """
-        if self.check_for_storm():
-            victim = random.choice([p for p in self.players if p.alive])
-            victim.alive = False
-            print(f"A storm hit the ship! {victim.name} has fallen overboard and drowned.")
-            return True
-        return False
+        potential_victims = [p for p in self.players if p.character.is_alive and p.character.role != "Pirate"]
+        if potential_victims:
+            victim = random.choice(potential_victims)
+            victim.character.is_alive = False
+            print(f"{victim.name} has fallen overboard and drowned!")
 
     def storm_at_day(self):
-        """ Day storm: Cancels the voting for the day. """
-        if self.check_for_storm():
-            print("A storm has hit during the day! The crew is too busy dealing with it to hold a vote.")
-            return True
-        return False
-
-    def start_night(self):
-        self.is_night = True
-        self.day_count += 1
-        print(f"Night {self.day_count} begins.")
-        self.check_for_storm()
-        # Perform night actions if no storm
-        if not self.storm_at_night():
-            for player in self.players:
-                if player.alive and not player.imprisoned:
-                    player.action(self.choose_target(player))
-
-    def start_day(self):
-        self.is_night = False
-        for player in self.players:
-            player.imprisoned = False
-        print(f"Day {self.day_count} begins.")
-        self.check_for_storm()
-        # Conduct voting if no storm
-        if not self.storm_at_day():
-            self.vote()
-
-    def choose_target(self, player):
-        import random
-        return random.choice([p for p in self.players if p != player and p.alive])
-
-
-    def get_vote(self, player):
-        """ Get a vote from the given player. Currently, it selects a target randomly. """
-        import random
-        # Choose from other alive players except the one who is voting
-        possible_targets = [p.name for p in self.players if p.alive and p.name != player.name]
-        return random.choice(possible_targets)
+        print("The crew is too busy dealing with the storm to hold a vote.")
 
     def vote(self):
-        """ Conduct the voting process among the players. """
         print("Voting time!")
-        # Initialize vote counts for each player
-        votes = {player.name: 0 for player in self.players if player.alive}
-
-        # Each alive player casts a vote
+        votes = {player.name: 0 for player in self.players if player.character.is_alive}
         for player in self.players:
-            if player.alive:
-                voted_player = self.get_vote(player)
-                votes[voted_player] += 1
-                print(f"{player.name} voted for {voted_player}")
-
-        # Determine who got the most votes
+            if player.character.is_alive:
+                voted_player_name = input(f"{player.name}, who do you vote for? ")
+                votes[voted_player_name] += 1
         eliminated_player = max(votes, key=votes.get)
-        self.eliminate_player(eliminated_player)
-
-    def eliminate_player(self, player_name):
-        """ Eliminate the player with the given name from the game. """
         for player in self.players:
-            if player.name == player_name:
-                player.alive = False
-                print(f"{player.name} has been eliminated from the game.")
-                break
-
+            if player.name == eliminated_player:
+                player.character.is_alive = False
+                print(f"{eliminated_player} has been eliminated!")
 
     def check_win_conditions(self):
-        good_alive = [player for player in self.players if player.role != "Evil" and player.alive]
-        evil_alive = [player for player in self.players if player.role == "Evil" and player.alive]
-
+        good_alive = sum(1 for p in self.players if p.character.alignment == "Good" and p.character.is_alive)
+        evil_alive = sum(1 for p in self.players if p.character.alignment == "Evil" and p.character.is_alive)
         if not evil_alive:
-            print("Good characters win!")
+            print("The good side wins!")
             return True
         elif len(evil_alive) >= len(good_alive):
-            print("Evil characters win!")
+            print("The evil side wins!")
+            return True
+        elif self.day_count > self.journey_days:
+            print("The voyage is complete! The good side wins!")
             return True
         return False
 
     def start_game(self):
+        print("Welcome to Stormy Voyage!")
+        self.setup_game()
         while not self.check_win_conditions():
             self.start_day()
             self.start_night()
-        print("Game Over")
 
+    def setup_game(self):
+        print("Setting up the game...")
+        # Add players and characters here
+
+# Create instances of characters and players
+player1 = Player("Player 1", Captain("Captain Jack"))
+player2 = Player("Player 2", Lookout("Lookout Lucy"))
+player3 = Player("Player 3", Navigator("Navigator Nate"))
+player4 = Player("Player 4", Mercenary("Mercenary Mike"))
+
+# Create an instance of the game
+storm_voyage = Game()
+
+# Add players to the game
+storm_voyage.add_player(player1)
+storm_voyage.add_player(player2)
+storm_voyage.add_player(player3)
+storm_voyage.add_player(player4)
+
+# Start the game
+storm_voyage.start_game()
