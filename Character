@@ -1,3 +1,5 @@
+import random
+
 class Character:
     def __init__(self, name, role, alignment):
         self.name = name
@@ -8,9 +10,12 @@ class Character:
     def perform_action(self, target):
         raise NotImplementedError("Subclass must implement abstract method")
 
+    def set_random_alignment(self):
+        return "Good" if random.choice([True, False]) else "Evil"
+
 class Captain(Character):
     def __init__(self, name):
-        super().__init__(name, "Captain", "Good")
+        super().__init__(name, "Captain", self.set_random_alignment())
 
     def perform_action(self, target):
         target.is_imprisoned = True
@@ -18,16 +23,22 @@ class Captain(Character):
 
 class Lookout(Character):
     def __init__(self, name):
-        super().__init__(name, "Lookout", "Good")
+        super().__init__(name, "Lookout", self.set_random_alignment())
 
     def perform_action(self, target):
         print(f"{self.name} is observing {target.name}'s actions.")
 
 class Navigator(Character):
     def __init__(self, name):
-        super().__init__(name, "Navigator", "Good")
+        super().__init__(name, "Navigator", self.set_random_alignment())
 
     def perform_action(self, target):
+        if self.alignment == "Good":
+            # Good Navigator reduces the storm probability by 5%
+            Game.storm_probability -= 0.05
+        elif self.alignment == "Evil":
+            # Evil Navigator extends the journey from 4 to 5 days
+            Game.journey_days += 1
         # Placeholder for Navigator's special action
         pass
 
@@ -65,7 +76,7 @@ class Mercenary(Character):
 
 class Assassin(Character):
     def __init__(self, name):
-        super().__init__(name, "Assassin", "Natural")
+        super().__init__(name, "Assassin", "Neutral")
 
     def perform_action(self, target):
         # Placeholder for Assassin's special action
@@ -73,8 +84,13 @@ class Assassin(Character):
 
 class OrdinaryPassenger(Character):
     def __init__(self, name, alignment):
-        super().__init__(name, "Ordinary Passenger", alignment)
+        super().__init__(name, "Ordinary Passenger", "Good")
 
     def perform_action(self, target):
         # Placeholder for Ordinary Passenger's special action
         pass
+
+class Player:
+    def __init__(self, name, character):
+        self.name = name
+        self.character = character
