@@ -1,27 +1,80 @@
 class Character:
-    def __init__(self, name, role):
+    def __init__(self, name, role, alignment):
         self.name = name
         self.role = role
-        self.alive = True
-        self.imprisoned = False
+        self.alignment = alignment
+        self.is_alive = True
 
-    def action(self, target):
-        pass
+    def perform_action(self, target):
+        raise NotImplementedError("Subclass must implement abstract method")
 
 class Captain(Character):
     def __init__(self, name):
-        super().__init__(name, "Captain")
+        super().__init__(name, "Captain", "Good")
 
-    def action(self, target):
-        target.imprisoned = True
+    def perform_action(self, target):
+        target.is_imprisoned = True
         print(f"{self.name} has imprisoned {target.name}.")
 
 class Lookout(Character):
     def __init__(self, name):
-        super().__init__(name, "Lookout")
+        super().__init__(name, "Lookout", "Good")
 
-    def action(self, target):
-        if target.has_night_action():
-            print(f"{self.name} observed {target.name} performing a night action.")
-           
-# Additional character classes would be defined similarly...
+    def perform_action(self, target):
+        print(f"{self.name} is observing {target.name}'s actions.")
+
+class Navigator(Character):
+    def __init__(self, name):
+        super().__init__(name, "Navigator", "Good")
+
+    def perform_action(self, target):
+        # Placeholder for Navigator's special action
+        pass
+
+class DiplomaticEnvoy(Character):
+    def __init__(self, name):
+        super().__init__(name, "Diplomatic Envoy", "Good")
+
+    def perform_secret_mission(self):
+        # Placeholder for Diplomatic Envoy's secret mission
+        pass
+
+class EnvoysGuard(Character):
+    def __init__(self, name):
+        super().__init__(name, "Envoy's Guard", "Good")
+
+    def perform_action(self, target):
+        # Placeholder for Envoy's Guard's special action
+        pass
+
+class Merchant(Character):
+    def __init__(self, name):
+        super().__init__(name, "Merchant", "Good")
+
+    def trade_with_player(self, target):
+        # Placeholder for Merchant's trade mechanism
+        pass
+
+class Mercenary(Character):
+    def __init__(self, name):
+        super().__init__(name, "Mercenary", "Neutral")
+
+    def perform_action(self, target):
+        # Placeholder for Mercenary's special action
+        pass
+
+class Assassin(Character):
+    def __init__(self, name):
+        super().__init__(name, "Assassin", "Natural")
+
+    def perform_action(self, target):
+        # Placeholder for Assassin's special action
+        pass
+
+class OrdinaryPassenger(Character):
+    def __init__(self, name, alignment):
+        super().__init__(name, "Ordinary Passenger", alignment)
+
+    def perform_action(self, target):
+        # Placeholder for Ordinary Passenger's special action
+        pass
