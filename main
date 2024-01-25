@@ -1,6 +1,18 @@
-# Example of initializing and starting a game
-game = Game()
-game.add_player(Captain("Captain John"))
-game.add_player(Lookout("Eagle Eye"))
-# Add other players as needed
-game.start_game()
+
+# Create instances of characters and players
+player1 = Player("Player 1", Captain("Captain Jack"))
+player2 = Player("Player 2", Lookout("Lookout Lucy"))
+player3 = Player("Player 3", Navigator("Navigator Nate"))
+player4 = Player("Player 4", Mercenary("Mercenary Mike"))
+
+# Create an instance of the game
+storm_voyage = Game()
+
+# Add players to the game
+storm_voyage.add_player(player1)
+storm_voyage.add_player(player2)
+storm_voyage.add_player(player3)
+storm_voyage.add_player(player4)
+
+# Start the game
+storm_voyage.start_game()
