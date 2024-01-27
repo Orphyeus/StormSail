@@ -1,3 +1,5 @@
+import random
+
 class Game:
     def __init__(self):
         self.players = []
@@ -11,31 +13,6 @@ class Game:
     def add_player(self, player):
         self.players.append(player)
 
-class Location:
-    def __init__(self, noise, light):
-        self.noise = noise
-        self.light = light
-
-    def update_conditions(self, is_night, is_storm):
-        if is_storm:
-            if is_night:
-                self.noise, self.light = (1, 3) if self.__class__.__name__ == "Cellar" else (7, 3)
-            else:
-                self.noise, self.light = (3, 5) if self.__class__.__name__ == "Cellar" else (8, 5)
-        else:
-            if is_night:
-                self.noise, self.light = (2, 2) if self.__class__.__name__ == "Cellar" else (5, 5)
-            else:
-                self.noise, self.light = (4, 4) if self.__class__.__name__ == "Cellar" else (7, 8)
-
-class Cellar(Location):
-    def __init__(self):
-        super().__init__(noise=4, light=4)
-
-class Deck(Location):
-    def __init__(self):
-        super().__init__(noise=7, light=8)
-
     def start_day(self):
         self.is_night = False
         self.day_count += 1
@@ -48,8 +25,8 @@ class Deck(Location):
     def start_night(self):
         self.is_night = True
         print(f"Night {self.day_count} begins.")
-        is_storm = self.check_storm()  # Eksik olan bu satır eklendi
-        self.cellar.update_conditions(self.is_night, is_storm)  # dungeon yerine cellar kullanıldı
+        is_storm = self.check_storm()
+        self.cellar.update_conditions(self.is_night, is_storm)
         self.deck.update_conditions(self.is_night, is_storm)
         if not is_storm:
             for player in self.players:
@@ -95,7 +72,7 @@ class Deck(Location):
         if not evil_alive:
             print("The good side wins!")
             return True
-        elif len(evil_alive) >= len(good_alive):
+        elif good_alive <= evil_alive:
             print("The evil side wins!")
             return True
         elif self.day_count > self.journey_days:
@@ -113,3 +90,28 @@ class Deck(Location):
     def setup_game(self):
         print("Setting up the game...")
         # Add players and characters here
+
+class Location:
+    def __init__(self, noise, light):
+        self.noise = noise
+        self.light = light
+
+    def update_conditions(self, is_night, is_storm):
+        if is_storm:
+            if is_night:
+                self.noise, self.light = (1, 3) if self.__class__.__name__ == "Cellar" else (7, 3)
+            else:
+                self.noise, self.light = (3, 5) if self.__class__.__name__ == "Cellar" else (8, 5)
+        else:
+            if is_night:
+                self.noise, self.light = (2, 2) if self.__class__.__name__ == "Cellar" else (5, 5)
+            else:
+                self.noise, self.light = (4, 4) if self.__class__.__name__ == "Cellar" else (7, 8)
+
+class Cellar(Location):
+    def __init__(self):
+        super().__init__(noise=4, light=4)
+
+class Deck(Location):
+    def __init__(self):
+        super().__init__(noise=7, light=8)
