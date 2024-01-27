@@ -1,3 +1,36 @@
+import random
+
+class Location:
+    def __init__(self, day_noise, day_light, night_noise, night_light, storm_day_noise, storm_day_light, storm_night_noise, storm_night_light):
+        self.day_noise = day_noise
+        self.day_light = day_light
+        self.night_noise = night_noise
+        self.night_light = night_light
+        self.storm_day_noise = storm_day_noise
+        self.storm_day_light = storm_day_light
+        self.storm_night_noise = storm_night_noise
+        self.storm_night_light = storm_night_light
+
+    def get_conditions(self, is_night, is_storm):
+        if is_storm:
+            if is_night:
+                return (self.storm_night_noise, self.storm_night_light)
+            else:
+                return (self.storm_day_noise, self.storm_day_light)
+        else:
+            if is_night:
+                return (self.night_noise, self.night_light)
+            else:
+                return (self.day_noise, self.day_light)
+
+class Cellar(Location):
+    def __init__(self):
+        super().__init__(4, 4, 2, 2, 3, 5, 1, 3)
+
+class Deck(Location):
+    def __init__(self):
+        super().__init__(7, 8, 5, 5, 8, 5, 7, 3)
+
 class Game:
     def __init__(self):
         self.players = []
@@ -5,6 +38,8 @@ class Game:
         self.is_night = False
         self.storm_chance = 0.15
         self.journey_days = 4  # Initial journey days
+        self.cellar = Cellar()
+        self.deck = Deck()
 
     def add_player(self, player):
         self.players.append(player)
@@ -71,6 +106,11 @@ class Game:
             return True
         return False
 
+    def print_environment_conditions(self, location):
+        is_storm = self.check_storm()
+        noise, light = location.get_conditions(self.is_night, is_storm)
+        print(f"Current environment in {location.__class__.__name__}: Noise level {noise}, Light level {light}")
+
     def start_game(self):
         print("Welcome to Stormy Voyage!")
         self.setup_game()
@@ -81,3 +121,29 @@ class Game:
     def setup_game(self):
         print("Setting up the game...")
         # Add players and characters here
+        # Example: self.add_player(Player("Alice", Character("Pirate", "Evil")))
+        # Don't forget to set up players and characters
+
+# Example player and character classes (You might need to define these or modify according to your game design)
+class Player:
+    def __init__(self, name, character):
+        self.name = name
+        self.character = character
+
+class Character:
+    def __init__(self, role, alignment):
+        self.role = role
+        self.alignment = alignment
+        self.is_alive = True
+
+    def perform_action(self, players):
+        # Define character actions here
+        pass
+
+# Example game initialization and start
+game = Game()
+# Add players
+game.add_player(Player("Alice", Character("Pirate", "Evil")))
+game.add_player(Player("Bob", Character("Sailor", "Good")))
+# Start the game
+game.start_game()
