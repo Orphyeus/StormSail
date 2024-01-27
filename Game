@@ -1,19 +1,24 @@
 import random
 
 class Game:
+    """This class manages the basic flow and state of the game."""
+
     def __init__(self):
-        self.players = []
-        self.day_count = 0
-        self.is_night = False
-        self.storm_chance = 0.15
-        self.journey_days = 4
-        self.cellar = Cellar()
-        self.deck = Deck()
+        """Initializes the starting state of the game."""
+        self.players = []          # List of players
+        self.day_count = 0         # Count of days passed
+        self.is_night = False      # Checks if it is night
+        self.storm_chance = 0.15   # Chance of a storm occurring
+        self.journey_days = 4      # Total duration of the journey
+        self.cellar = Cellar()     # Creation of the cellar
+        self.deck = Deck()         # Creation of the deck
 
     def add_player(self, player):
+        """Adds a new player."""
         self.players.append(player)
 
     def start_day(self):
+        """Starts the day and manages day-related events."""
         self.is_night = False
         self.day_count += 1
         is_storm = self.check_storm()
@@ -23,6 +28,7 @@ class Game:
             self.vote()
 
     def start_night(self):
+        """Starts the night and manages night-time events."""
         self.is_night = True
         print(f"Night {self.day_count} begins.")
         is_storm = self.check_storm()
@@ -34,6 +40,7 @@ class Game:
                     player.character.perform_action(self.players)
 
     def check_storm(self):
+        """Checks for a storm and initiates necessary actions if there is one."""
         if random.random() < self.storm_chance:
             print("A storm has hit the ship!")
             if self.is_night:
@@ -44,6 +51,7 @@ class Game:
         return False
 
     def storm_at_night(self):
+        """Actions to be taken during a night-time storm."""
         potential_victims = [p for p in self.players if p.character.is_alive and p.character.role != "Pirate"]
         if potential_victims:
             victim = random.choice(potential_victims)
@@ -51,9 +59,11 @@ class Game:
             print(f"{victim.name} has fallen overboard and drowned!")
 
     def storm_at_day(self):
+        """Actions to be taken during a daytime storm."""
         print("The crew is too busy dealing with the storm to hold a vote.")
 
     def vote(self):
+        """The voting process where players vote to eliminate each other."""
         print("Voting time!")
         votes = {player.name: 0 for player in self.players if player.character.is_alive}
         for player in self.players:
@@ -67,6 +77,7 @@ class Game:
                 print(f"{eliminated_player} has been eliminated!")
 
     def check_win_conditions(self):
+        """Checks the win conditions of the game."""
         good_alive = sum(1 for p in self.players if p.character.alignment == "Good" and p.character.is_alive)
         evil_alive = sum(1 for p in self.players if p.character.alignment == "Evil" and p.character.is_alive)
         if not evil_alive:
@@ -81,6 +92,7 @@ class Game:
         return False
 
     def start_game(self):
+        """Starts the game and manages the game loop."""
         print("Welcome to Stormy Voyage!")
         self.setup_game()
         while not self.check_win_conditions():
@@ -88,15 +100,20 @@ class Game:
             self.start_night()
 
     def setup_game(self):
+        """Sets up the game. Players and characters should be added here."""
         print("Setting up the game...")
         # Add players and characters here
 
 class Location:
+    """Location class. Holds and updates noise and light levels."""
+
     def __init__(self, noise, light):
+        """Sets the initial noise and light levels."""
         self.noise = noise
         self.light = light
 
     def update_conditions(self, is_night, is_storm):
+        """Updates conditions based on day/night and storm scenarios."""
         if is_storm:
             if is_night:
                 self.noise, self.light = (1, 3) if self.__class__.__name__ == "Cellar" else (7, 3)
@@ -109,9 +126,16 @@ class Location:
                 self.noise, self.light = (4, 4) if self.__class__.__name__ == "Cellar" else (7, 8)
 
 class Cellar(Location):
+    """Cellar class, derived from Location."""
+
     def __init__(self):
+        """Sets initial noise and light levels for the cellar."""
         super().__init__(noise=4, light=4)
 
 class Deck(Location):
+    """Deck class, derived from Location."""
+
     def __init__(self):
+        """Sets initial noise and light levels for the deck."""
         super().__init__(noise=7, light=8)
+
