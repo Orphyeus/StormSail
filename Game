@@ -5,7 +5,7 @@ class Game:
         self.is_night = False
         self.storm_chance = 0.15
         self.journey_days = 4
-				self.cellar = Cellar()
+        self.cellar = Cellar()
         self.deck = Deck()
 
     def add_player(self, player):
@@ -39,7 +39,7 @@ class Deck(Location):
     def start_day(self):
         self.is_night = False
         self.day_count += 1
-				is_storm = self.check_storm()
+        is_storm = self.check_storm()
         self.cellar.update_conditions(self.is_night, is_storm)
         self.deck.update_conditions(self.is_night, is_storm)
         if not is_storm:
@@ -48,7 +48,8 @@ class Deck(Location):
     def start_night(self):
         self.is_night = True
         print(f"Night {self.day_count} begins.")
-				self.dungeon.update_conditions(self.is_night, is_storm)
+        is_storm = self.check_storm()  # Eksik olan bu satır eklendi
+        self.cellar.update_conditions(self.is_night, is_storm)  # dungeon yerine cellar kullanıldı
         self.deck.update_conditions(self.is_night, is_storm)
         if not is_storm:
             for player in self.players:
