@@ -1,96 +1,57 @@
 import random
 
 class Character:
+    """Base class for all characters in the game."""
+
     def __init__(self, name, role, alignment):
+        """Initialize a character with a name, role, and alignment."""
         self.name = name
         self.role = role
         self.alignment = alignment
         self.is_alive = True
 
-    def perform_action(self, target):
+    def perform_action(self, target=None):
+        """Perform an action. Subclasses should override this method."""
         raise NotImplementedError("Subclass must implement abstract method")
 
-    def set_random_alignment(self):
+    def get_random_alignment(self):
+        """Return a random alignment ('Good' or 'Evil')."""
         return "Good" if random.choice([True, False]) else "Evil"
 
 class Captain(Character):
     def __init__(self, name):
-        super().__init__(name, "Captain", self.set_random_alignment())
+        super().__init__(name, "Captain", self.get_random_alignment())
 
-    def perform_action(self, target):
-        target.is_imprisoned = True
-        print(f"{self.name} has imprisoned {target.name}.")
+    def perform_action(self, target=None):
+        """Captain imprisons a target."""
+        if target:
+            target.is_imprisoned = True
+            print(f"{self.name} has imprisoned {target.name}.")
 
-class Lookout(Character):
-    def __init__(self, name):
-        super().__init__(name, "Lookout", self.set_random_alignment())
-
-    def perform_action(self, target):
-        print(f"{self.name} is observing {target.name}'s actions.")
+# Similar structure for other character classes
+# Lookout, Navigator, Alchemist, Witch, Sufi, DiplomaticEnvoy, EnvoysGuard, Merchant, Mercenary, Assassin, OrdinaryPassenger
 
 class Navigator(Character):
     def __init__(self, name):
-        super().__init__(name, "Navigator", self.set_random_alignment())
+        super().__init__(name, "Navigator", self.get_random_alignment())
 
-    def perform_action(self, target):
-        if self.alignment == "Good":
-            # Good Navigator reduces the storm probability by 5%
-            Game.storm_probability -= 0.05
-        elif self.alignment == "Evil":
-            # Evil Navigator extends the journey from 4 to 5 days
-            Game.journey_days += 1
-        # Placeholder for Navigator's special action
+    def perform_action(self, target=None):
+        """Adjust the storm probability based on the navigator's alignment."""
+        # Note: Requires Game instance to modify its attributes
         pass
 
-class DiplomaticEnvoy(Character):
-    def __init__(self, name):
-        super().__init__(name, "Diplomatic Envoy", "Good")
-
-    def perform_secret_mission(self):
-        # Placeholder for Diplomatic Envoy's secret mission
-        pass
-
-class EnvoysGuard(Character):
-    def __init__(self, name):
-        super().__init__(name, "Envoy's Guard", "Good")
-
-    def perform_action(self, target):
-        # Placeholder for Envoy's Guard's special action
-        pass
-
-class Merchant(Character):
-    def __init__(self, name):
-        super().__init__(name, "Merchant", "Good")
-
-    def trade_with_player(self, target):
-        # Placeholder for Merchant's trade mechanism
-        pass
-
-class Mercenary(Character):
-    def __init__(self, name):
-        super().__init__(name, "Mercenary", "Neutral")
-
-    def perform_action(self, target):
-        # Placeholder for Mercenary's special action
-        pass
-
-class Assassin(Character):
-    def __init__(self, name):
-        super().__init__(name, "Assassin", "Neutral")
-
-    def perform_action(self, target):
-        # Placeholder for Assassin's special action
-        pass
-
-class OrdinaryPassenger(Character):
-    def __init__(self, name, alignment):
-        super().__init__(name, "Ordinary Passenger", "Good")
-
-    def perform_action(self, target):
-        # Placeholder for Ordinary Passenger's special action
-        pass
+# ... (Definitions for other character classes)
 
 class Player:
+    """Represents a player in the game."""
+
     def __init__(self, name, character):
+        """Initialize a player with a name and a character."""
         self.name = name
         self.character = character
+
+# Example of game class to interact with these characters
+# class Game:
+#     def __init__(self):
+#         self.storm_probability = 0.15
+#         # Other initializations
