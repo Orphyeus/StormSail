@@ -1,4 +1,4 @@
-import random
+from Characters import *
 from Location import *
 
 
@@ -89,10 +89,42 @@ class Game:
             return True
         return False
 
+    def setup_game(self):
+        """Sets up the game with players and characters."""
+        print("Setting up the game...")
+
+        # Instantiate one of each character class
+        character_instances = [
+            Captain("Captain Jack"),
+            Navigator("Navigator Joe"),
+            StormBringer("Stormy Dan"),
+            Alchemist("Alchemist Ann"),
+            Lookout("Lookout Lee"),
+            DiplomaticEnvoy("Envoy Eve"),
+            EnvoysGuard("Guard Gabe"),
+            Mercenary("Mercenary Max"),
+            Assassin("Assassin Alex"),
+            OrdinaryPassenger("Passenger Pat")
+        ]
+
+        # Create players for each character instance
+        for index, character in enumerate(character_instances):
+            player_name = f"Player {index + 1}"
+            self.players.append(Player(player_name, character))
+
+        # Optional: Create additional players if needed, potentially reusing character classes
+        additional_players_count = 0  # Or however many additional players you want
+        for i in range(len(character_instances), len(character_instances) + additional_players_count):
+            character_class = random.choice(character_instances)
+            character_name = f"{character_class.__name__} {i + 1}"
+            character = character_class(character_name)
+            player = Player(f"Player {i + 1}", character)
+            self.add_player(player)
+
     def start_game(self):
         """Starts the game and manages the game loop."""
         print("Welcome to Stormy Voyage!")
-        setup_game()
+        self.setup_game()
         while not self.check_win_conditions():
             self.start_day()
             self.start_night()
@@ -101,9 +133,3 @@ class Game:
 def storm_at_day():
     """Actions to be taken during a daytime storm."""
     print("The crew is too busy dealing with the storm to hold a vote.")
-
-
-def setup_game():
-    """Sets up the game. Players and characters should be added here."""
-    print("Setting up the game...")
-    # Add players and characters here
