@@ -5,7 +5,7 @@ class Character:
     def __init__(self, name, role, action_type, alignment):
         self.name = name
         self.role = role
-        self.type = action_type
+        self.action_type = action_type
         self.alignment = alignment
         self.is_alive = True
 
