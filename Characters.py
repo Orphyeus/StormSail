@@ -2,10 +2,10 @@ import random
 
 
 class Character:
-    def __init__(self, name, role, type, alignment):
+    def __init__(self, name, role, action_type, alignment):
         self.name = name
         self.role = role
-        self.type = type
+        self.type = action_type
         self.alignment = alignment
         self.is_alive = True
 
@@ -57,7 +57,7 @@ class Navigator(Character):
 
 class DiplomaticEnvoy(Character):
     def __init__(self, name):
-        super().__init__(name, "Diplomatic Envoy", "Strategic", "Good")
+        super().__init__(name, "Diplomatic Envoy", "Aggressive", "Good")
 
     def perform_action(self, target):
         # Placeholder for Diplomatic Envoy's secret mission
@@ -93,7 +93,7 @@ class Alchemist(Character):
     def __init__(self, name):
         super().__init__(name, "Alchemist", "Strategic", "Evil")
 
-    def perform_action(self, game_instance, target=None):
+    def perform_action(self, game_instance):
         """Extend the journey by manipulating the compass."""
         game_instance.journey_days += 1
 
@@ -118,14 +118,15 @@ class Assassin(Character):
 
 class OrdinaryPassenger(Character):
     def __init__(self, name):
-        super().__init__(name, "Ordinary Passenger", "Aggressive", "Evil")
+        super().__init__(name, "Ordinary Passenger", "Aggressive", self.set_random_alignment())
 
     def perform_action(self, target):
-        if target and target.is_alive:
-            target.is_alive = False
-            self.consecutive_kills += 1
-            print(f"{self.name} has killed {target.name}.")
-        pass
+        if self.alignment == "Evil":
+            if target and target.is_alive:
+                target.is_alive = False
+                print(f"{self.name} has killed {target.name}.")
+        else:
+            pass
 
 
 class Player:
