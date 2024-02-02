@@ -39,13 +39,25 @@ class Game:
         if not is_storm:
             for player in self.players:
                 if player.character.is_alive:
-                    target_name = input(f"{player.name}, who do you attack? (Leave blank for no target): ")
+                    if player.character.action_type == "Aggressive":
 
-                    # Find the target player by name, if given
-                    target = next((p for p in self.players if p.name == target_name), None)
+                        target_name = input(f"{player.name}, who do you attack? (Leave blank for no target): ")
 
-                    # Perform the action with or without a target
-                    player.character.perform_action(self, target)
+                        if target_name.strip():  # If input is not empty and not just whitespace
+                            # Find the target player by name
+                            target = next((p for p in self.players if p.name == target_name), None)
+
+                            if target:  # If a target is found
+                                player.character.perform_action(self, target)
+                            else:
+                                print(f"Target not found: {target_name}")
+                        else:
+                            print(f"{player.name} chooses not to attack anyone this turn.")
+                            # Here, you can add any special action that should be taken when no target is chosen.
+
+
+                    elif player.character.action_type == "Strategic":
+                        player.character.perform_action(self)
 
     def check_storm(self):
         """Checks for a storm and initiates necessary actions if there is one."""
@@ -138,3 +150,4 @@ class Game:
 def storm_at_day():
     """Actions to be taken during a daytime storm."""
     print("The crew is too busy dealing with the storm to hold a vote.")
+    
