@@ -1,11 +1,11 @@
 import random
-import Game
 
 
 class Character:
-    def __init__(self, name, role, alignment):
+    def __init__(self, name, role, type, alignment):
         self.name = name
         self.role = role
+        self.type = type
         self.alignment = alignment
         self.is_alive = True
 
@@ -19,39 +19,45 @@ class Character:
 
 class Captain(Character):
     def __init__(self, name):
-        super().__init__(name, "Captain", self.set_random_alignment())
+        super().__init__(name, "Captain", "Aggressive", self.set_random_alignment())
 
     def perform_action(self, target):
-        target.is_imprisoned = True
-        print(f"{self.name} has imprisoned {target.name}.")
+        """Imprison a target if specified."""
+        if target:
+            target.is_imprisoned = True
+            print(f"{self.name} has imprisoned {target.name}.")
+        else:
+            print(f"{self.name} chooses not to imprison anyone this turn.")
 
 
 class Lookout(Character):
     def __init__(self, name):
-        super().__init__(name, "Lookout", self.set_random_alignment())
+        super().__init__(name, "Lookout", "Aggressive", self.set_random_alignment())
 
     def perform_action(self, target):
-        print(f"{self.name} is observing {target.name}'s actions.")
+        """Lookout observes the target's actions."""
+        if target:
+            print(f"{self.name} is observing {target.name}'s actions.")
+            print(f"{self.name} is detect {target.name} is {target.type} type.")
+        else:
+            print(f"{self.name} is keeping watch but chooses not to observe anyone specifically.")
 
 
 class Navigator(Character):
     def __init__(self, name):
-        super().__init__(name, "Navigator", self.set_random_alignment())
+        super().__init__(name, "Navigator", "Strategic", self.set_random_alignment())
 
-    def perform_action(self, target=None):
+    def perform_action(self, game_instance):
+        """Modify the storm probability based on the navigator's alignment."""
         if self.alignment == "Good":
-            # Good Navigator reduces the storm probability by 5%
-            Game.storm_probability -= 0.05
+            game_instance.storm_probability -= 0.05
         elif self.alignment == "Evil":
-            # Evil Navigator extends the journey from 4 to 5 days
-            Game.storm_probability += 0.05
-        # Placeholder for Navigator's special action
-        pass
+            game_instance.storm_probability += 0.05
 
 
 class DiplomaticEnvoy(Character):
     def __init__(self, name):
-        super().__init__(name, "Diplomatic Envoy", "Good")
+        super().__init__(name, "Diplomatic Envoy", "Strategic", "Good")
 
     def perform_action(self, target):
         # Placeholder for Diplomatic Envoy's secret mission
@@ -60,7 +66,7 @@ class DiplomaticEnvoy(Character):
 
 class EnvoysGuard(Character):
     def __init__(self, name):
-        super().__init__(name, "Envoy's Guard", "Good")
+        super().__init__(name, "Envoy's Guard", "Aggressive", "Good")
 
     def perform_action(self, target):
         # Placeholder for Envoy's Guard's special action
@@ -69,35 +75,32 @@ class EnvoysGuard(Character):
 
 class StormBringer(Character):
     def __init__(self, name):
-        super().__init__(name, "StormBringer", "Evil")
+        super().__init__(name, "StormBringer", "Strategic", "Evil")
         self.consecutive_kills = 0  # Track consecutive kills
 
-    def perform_action(self, target):
-        """Kill a target and possibly increase storm probability after 3 consecutive kills."""
-        if target.is_alive:
-            target.is_alive = False
-            self.consecutive_kills += 1
-            print(f"{self.name} has killed {target.name}.")
-
-            if self.consecutive_kills == 3:
-                # Increase storm probability by 20% after 3 consecutive kills
-                Game.storm_probability += 0.20
-                self.consecutive_kills = 0  # Reset the counter
+    def perform_action(self, game_instance):
+        """Increase storm probability after 3 consecutive kills."""
+        if self.consecutive_kills == 3:
+            game_instance.storm_probability += 0.2
+            self.consecutive_kills = 0  # Reset the counter
+        else:
+            # Reset consecutive kills if no target or target is already dead
+            self.consecutive_kills = 0
+            print(f"{self.name} did not attack anyone this turn.")
 
 
 class Alchemist(Character):
     def __init__(self, name):
-        super().__init__(name, "Alchemist", "Evil")
+        super().__init__(name, "Alchemist", "Strategic", "Evil")
 
-    def perform_action(self, target=None):
+    def perform_action(self, game_instance, target=None):
         """Extend the journey by manipulating the compass."""
-        Game.journey_days += 1
-        print(f"{self.name} has extended the journey by one day.")
+        game_instance.journey_days += 1
 
 
 class Mercenary(Character):
     def __init__(self, name):
-        super().__init__(name, "Mercenary", "Neutral")
+        super().__init__(name, "Mercenary", "Aggressive", "Neutral")
 
     def perform_action(self, target):
         # Placeholder for Mercenary's special action
@@ -106,7 +109,7 @@ class Mercenary(Character):
 
 class Assassin(Character):
     def __init__(self, name):
-        super().__init__(name, "Assassin", "Neutral")
+        super().__init__(name, "Assassin", "Aggressive", "Neutral")
 
     def perform_action(self, target):
         # Placeholder for Assassin's special action
@@ -114,11 +117,14 @@ class Assassin(Character):
 
 
 class OrdinaryPassenger(Character):
-    def __init__(self, name, alignment):
-        super().__init__(name, "Ordinary Passenger", "Good")
+    def __init__(self, name):
+        super().__init__(name, "Ordinary Passenger", "Aggressive", "Evil")
 
     def perform_action(self, target):
-        # Placeholder for Ordinary Passenger's special action
+        if target and target.is_alive:
+            target.is_alive = False
+            self.consecutive_kills += 1
+            print(f"{self.name} has killed {target.name}.")
         pass
 
 
