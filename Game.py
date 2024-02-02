@@ -10,7 +10,7 @@ class Game:
         self.players = []  # List of players
         self.day_count = 0  # Count of days passed
         self.is_night = False  # Checks if it is night
-        self.storm_chance = 0.15  # Chance of a storm occurring
+        self.storm_probability = 0.15  # Chance of a storm occurring
         self.journey_days = 4  # Total duration of the journey
         self.cellar = Cellar()  # Creation of the cellar
         self.deck = Deck()  # Creation of the deck
@@ -30,7 +30,7 @@ class Game:
             self.vote()
 
     def start_night(self):
-        """Starts the night and manages night-time events."""
+        """Starts the night and manages nighttime events."""
         self.is_night = True
         print(f"Night {self.day_count} begins.")
         is_storm = self.check_storm()
@@ -39,11 +39,17 @@ class Game:
         if not is_storm:
             for player in self.players:
                 if player.character.is_alive:
-                    player.character.perform_action(self.players)
+                    target_name = input(f"{player.name}, who do you attack? (Leave blank for no target): ")
+
+                    # Find the target player by name, if given
+                    target = next((p for p in self.players if p.name == target_name), None)
+
+                    # Perform the action with or without a target
+                    player.character.perform_action(self, target)
 
     def check_storm(self):
         """Checks for a storm and initiates necessary actions if there is one."""
-        if random.random() < self.storm_chance:
+        if random.random() < self.storm_probability:
             print("A storm has hit the ship!")
             if self.is_night:
                 self.storm_at_night()
@@ -53,7 +59,7 @@ class Game:
         return False
 
     def storm_at_night(self):
-        """Actions to be taken during a night-time storm."""
+        """Actions to be taken during a nighttime storm."""
         potential_victims = [p for p in self.players if p.character.is_alive and p.character.role != "Pirate"]
         if potential_victims:
             victim = random.choice(potential_victims)
@@ -103,8 +109,7 @@ class Game:
             DiplomaticEnvoy("Envoy Eve"),
             EnvoysGuard("Guard Gabe"),
             Mercenary("Mercenary Max"),
-            Assassin("Assassin Alex"),
-            OrdinaryPassenger("Passenger Pat")
+            Assassin("Assassin Alex")
         ]
 
         # Create players for each character instance
