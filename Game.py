@@ -55,7 +55,6 @@ class Game:
                             print(f"{player.name} chooses not to attack anyone this turn.")
                             # Here, you can add any special action that should be taken when no target is chosen.
 
-
                     elif player.character.action_type == "Strategic":
                         player.character.perform_action(self)
 
@@ -79,18 +78,39 @@ class Game:
             print(f"{victim.name} has fallen overboard and drowned!")
 
     def vote(self):
-        """The voting process where players vote to eliminate each other."""
+        """The voting process where players vote to eliminate each other or choose not to vote."""
         print("Voting time!")
+        # Create a dictionary to hold votes, including only alive players
         votes = {player.name: 0 for player in self.players if player.character.is_alive}
+
         for player in self.players:
             if player.character.is_alive:
-                voted_player_name = input(f"{player.name}, who do you vote for? ")
-                votes[voted_player_name] += 1
-        eliminated_player = max(votes, key=votes.get)
-        for player in self.players:
-            if player.name == eliminated_player:
-                player.character.is_alive = False
-                print(f"{eliminated_player} has been eliminated!")
+                while True:  # Stay in the loop until a valid input is received
+                    voted_player_name = input(f"{player.name}, who do you vote for? (Type 'pass' to abstain): ").strip()
+
+                    if voted_player_name.lower() == 'pass' or voted_player_name == "":
+                        print(f"{player.name} chooses to abstain from voting this turn.")
+                        break  # Exit the loop if the player chooses to abstain
+
+                    elif voted_player_name in votes:
+                        votes[voted_player_name] += 1
+                        print(f"{player.name} has voted for {voted_player_name}.")
+                        break  # Exit the loop after a valid vote
+
+                    else:
+                        print("Invalid vote or player is already eliminated. "
+                              "Please vote again or type 'pass' to abstain.")
+
+        # If there are votes cast, find the player with the most votes and eliminate them
+        if any(votes.values()):
+            eliminated_player = max(votes, key=votes.get)
+            for player in self.players:
+                if player.name == eliminated_player and player.character.is_alive:
+                    player.character.is_alive = False
+                    print(f"{eliminated_player} has been eliminated!")
+                    break  # Exit the loop once the eliminated player is found
+        else:
+            print("No votes cast this turn.")
 
     def check_win_conditions(self):
         """Checks the win conditions of the game."""
@@ -150,4 +170,3 @@ class Game:
 def storm_at_day():
     """Actions to be taken during a daytime storm."""
     print("The crew is too busy dealing with the storm to hold a vote.")
-    

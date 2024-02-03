@@ -51,8 +51,10 @@ class Navigator(Character):
         """Modify the storm probability based on the navigator's alignment."""
         if self.alignment == "Good":
             game_instance.storm_probability -= 0.05
+            print("Navigator decrease the storms probability: ", game_instance.storm_probability)
         elif self.alignment == "Evil":
             game_instance.storm_probability += 0.05
+            print("Navigator increase the storms probability: ", game_instance.storm_probability)
 
 
 class DiplomaticEnvoy(Character):
@@ -82,6 +84,7 @@ class StormBringer(Character):
         """Increase storm probability after 3 consecutive kills."""
         if self.consecutive_kills == 3:
             game_instance.storm_probability += 0.2
+            print("Storm Bringer increase the storms probability: ", game_instance.storm_probability)
             self.consecutive_kills = 0  # Reset the counter
         else:
             # Reset consecutive kills if no target or target is already dead
@@ -96,6 +99,7 @@ class Alchemist(Character):
     def perform_action(self, game_instance):
         """Extend the journey by manipulating the compass."""
         game_instance.journey_days += 1
+        print("Alchemist manipulate the compass, journey day: ", game_instance.journey_days)
 
 
 class Mercenary(Character):
