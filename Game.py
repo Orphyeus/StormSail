@@ -134,14 +134,15 @@ class Game:
         # Instantiate one of each character class
         character_instances = [
             Captain("Captain Jack"),
-            Navigator("Navigator Joe"),
-            StormBringer("Stormy Dan"),
-            Alchemist("Alchemist Ann"),
             Lookout("Lookout Lee"),
-            DiplomaticEnvoy("Envoy Eve"),
-            EnvoysGuard("Guard Gabe"),
-            Mercenary("Mercenary Max"),
-            Assassin("Assassin Alex")
+            Navigator("Navigator Joe"),
+            StormBringer("Passenger Davy"),
+            Alchemist("Passenger Ann"),
+            PirateExecutioner("Passenger Goku"),
+            Mercenary("Passenger Max"),
+            Headhunter("Passenger John"),
+            Prayer("Passenger Jeremiah"),
+            OrdinaryPassenger("Passenger Charlie")
         ]
 
         # Create players for each character instance
