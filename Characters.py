@@ -11,10 +11,12 @@ class Character:
         self.is_protected = False
 
     def perform_action(self, target):
+        """Perform the character's action."""
         raise NotImplementedError("Subclass must implement abstract method")
 
     @staticmethod
     def set_random_alignment():
+        """Set a random alignment for the character."""
         return "Good" if random.choice([True, False]) else "Evil"
 
 
